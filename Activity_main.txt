@@ -1,0 +1,187 @@
+Activity_main.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="125dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        tools:layout_editor_absoluteX="205dp"
+        tools:layout_editor_absoluteY="49dp" />
+
+    <EditText
+        android:id="@+id/editText2"
+        android:layout_width="125dp"
+        android:layout_height="20dp"
+        android:layout_alignTop="@+id/textView2"
+        android:layout_toEndOf="@+id/button"
+        android:ems="10"
+        android:inputType="textPersonName"
+        tools:layout_editor_absoluteX="205dp"
+        tools:layout_editor_absoluteY="132dp"
+        android:layout_toRightOf="@+id/button" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="81dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/TextView"
+        android:layout_marginTop="99dp"
+        android:text="Height"
+        tools:layout_editor_absoluteX="50dp"
+        tools:layout_editor_absoluteY="49dp"
+        android:layout_alignLeft="@+id/TextView" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="83dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/textView"
+        android:layout_marginTop="146dp"
+        android:text="Weight"
+        tools:layout_editor_absoluteX="50dp"
+        tools:layout_editor_absoluteY="132dp"
+        android:layout_alignLeft="@+id/textView" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="117dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/textView"
+        android:layout_marginBottom="241dp"
+        android:text="Show BMI"
+        tools:layout_editor_absoluteX="50dp"
+        tools:layout_editor_absoluteY="292dp"
+        android:layout_alignLeft="@+id/textView" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="117dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/textView"
+        android:layout_marginBottom="178dp"
+        android:text="Add Data"
+        tools:layout_editor_absoluteX="50dp"
+        tools:layout_editor_absoluteY="372dp"
+        android:layout_alignLeft="@+id/textView" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/button4"
+        android:layout_marginEnd="15dp"
+        android:text="View Details"
+        tools:layout_editor_absoluteX="50dp"
+        tools:layout_editor_absoluteY="460dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="15dp" />
+
+    <EditText
+        android:id="@+id/editText4"
+        android:layout_width="124dp"
+        android:layout_height="22dp"
+        android:layout_alignStart="@+id/editText2"
+        android:layout_alignTop="@+id/textView"
+        android:ems="10"
+        android:inputType="textPersonName"
+        tools:layout_editor_absoluteX="205dp"
+        tools:layout_editor_absoluteY="292dp"
+        android:layout_alignLeft="@+id/editText2" />
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="104dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/button5"
+        android:layout_centerHorizontal="true"
+        android:text="Update"
+        tools:layout_editor_absoluteX="205dp"
+        tools:layout_editor_absoluteY="372dp" />
+
+    <TextView
+        android:id="@+id/TextView"
+        android:layout_width="95dp"
+        android:layout_height="34dp"
+        android:layout_alignEnd="@+id/editText"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="196dp"
+        android:text="ID"
+        tools:layout_editor_absoluteX="50dp"
+        tools:layout_editor_absoluteY="201dp"
+        android:layout_alignRight="@+id/editText" />
+
+    <EditText
+        android:id="@+id/editID"
+        android:layout_width="122dp"
+        android:layout_height="29dp"
+        android:layout_alignTop="@+id/TextView"
+        android:layout_toEndOf="@+id/button"
+        android:ems="10"
+        android:inputType="textPersonName"
+        tools:layout_editor_absoluteX="204dp"
+        tools:layout_editor_absoluteY="201dp"
+        android:layout_toRightOf="@+id/button" />
+
+    <Button
+        android:id="@+id/button5"
+        android:layout_width="99dp"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/editText"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="22dp"
+        android:text="Delete"
+        tools:layout_editor_absoluteX="205dp"
+        tools:layout_editor_absoluteY="460dp"
+        android:layout_alignRight="@+id/editText" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="122dp"
+        android:layout_height="51dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/button"
+        android:layout_marginEnd="62dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="62dp" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="140dp"
+        android:layout_height="35dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/textView"
+        android:layout_marginTop="35dp"
+        android:text="BMI "
+        android:layout_alignLeft="@+id/textView" />
+
+</RelativeLayout>

@@ -1,0 +1,511 @@
+Main Activity.java
+
+package com.example.hppc.healthcare;
+
+import android.database.Cursor;
+import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+
+public class MainActivity extends AppCompatActivity {
+    DatabaseHelper myDb;
+    EditText editHeight,editWeight,editTextID;
+    TextView result;
+    Button btnAddData;
+    Button btnviewDetails;
+    Button btnviewUpdate;
+    Button btnDelete;
+    Button btnShowBmi;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        myDb = new DatabaseHelper(this);
+
+        editHeight = (EditText)findViewById(R.id.editText);
+        editWeight = (EditText)findViewById(R.id.editText2);
+        editTextID     = (EditText)findViewById(R.id.editID);
+        btnAddData = (Button)findViewById(R.id.button2);
+        btnviewDetails = (Button)findViewById(R.id.button3);
+        btnviewUpdate = (Button)findViewById(R.id.button4);
+        btnDelete = (Button)findViewById(R.id.button5);
+        result = (TextView)findViewById(R.id.textView3);
+        result = (TextView)findViewById(R.id.textView3);
+
+            AddData();
+            viewAll();
+            UpdateData();
+            DeleteData();
+            calculateBmi();
+
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+
+        btnShowBmi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ////////method;
+            }
+        });
+
+
+    }
+
+    public void calculateBmi() {
+        String Height = editHeight.getText().toString();
+        String Weight = editWeight.getText().toString();
+
+        if (Height != null && !"".equals(Height) && Weight != null && !"".equals(Weight)) {
+            Float HeightValue = Float.parseFloat(Height) / 100;
+            Float WeightValue = Float.parseFloat(Weight);
+
+            float bmi = WeightValue / (HeightValue * HeightValue);
+            displayBMI(bmi);
+        }
+
+
+    }
+
+    private void displayBMI(float bmi) {
+        String bmiLabel1 = "";
+
+        if (Float.compare(bmi, 15f) <= 0) {
+            bmiLabel1 = "Very severely UnderWeight ";
+        } else if (Float.compare(bmi, 15f) > 0 && Float.compare(bmi, 16f) <= 0) {
+            bmiLabel1 = "Severely UnderWeight ";
+        } else if (Float.compare(bmi, 16f) > 0 && Float.compare(bmi, 18.5f) <= 0) {
+            bmiLabel1 = "UnderWeight ";
+        } else if (Float.compare(bmi, 18.5f) > 0 && Float.compare(bmi, 25f) <= 0) {
+            bmiLabel1 = "Normal ";
+        } else if (Float.compare(bmi, 25f) > 0 && Float.compare(bmi, 30f) <= 0) {
+            bmiLabel1 = "Overweight ";
+        } else if (Float.compare(bmi, 30f) > 0 && Float.compare(bmi, 35f) <= 0) {
+            bmiLabel1 = "obese level I ";
+        } else if (Float.compare(bmi, 35f) > 0 && Float.compare(bmi, 40f) <= 0) {
+            bmiLabel1 = "obese level II ";
+        } else {
+            bmiLabel1 = "obese level III ";
+        }
+
+        bmiLabel1 = bmi + "\n" + bmiLabel1;
+        result.setText(bmiLabel1);
+
+    }
+
+
+    public void DeleteData(){
+        btnDelete.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Integer deletedRows = myDb.deleteData(editTextID.getText().toString());
+                        if(deletedRows > 0)
+                            Toast.makeText(MainActivity.this,"Data Deleted",Toast.LENGTH_LONG).show();
+                        else
+                            Toast.makeText(MainActivity.this,"Data not Deleted",Toast.LENGTH_LONG).show();
+
+
+                    }
+                }
+        );
+    }
+
+    public void UpdateData(){
+        btnviewUpdate.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        boolean isUpdate = myDb.updateData(editTextID.getText().toString(),
+                                editHeight.getText().toString(),
+                                editWeight.getText().toString());
+                        if(isUpdate == true)
+                            Toast.makeText(MainActivity.this,"Data Update",Toast.LENGTH_LONG).show();
+                        else
+                            Toast.makeText(MainActivity.this,"Data not Update",Toast.LENGTH_LONG).show();
+
+
+                    }
+                }
+
+        );
+    }
+
+    public void AddData(){
+        btnAddData.setOnClickListener(
+            new View.OnClickListener(){
+
+                public void onClick(View v){
+                    myDb.insertData(editHeight.getText().toString(),
+                                    editWeight.getText().toString());
+
+                    boolean isInserted = false;
+                    if(isInserted == true)
+                        Toast.makeText(MainActivity.this, "Data Inserted", Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(MainActivity.this, "Data Not Inserted", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            );
+    }
+
+    public void viewAll(){
+        btnviewDetails.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Cursor res = myDb.getAllData();
+                        if(res.getCount()==0){
+                            //show message
+                            showMessage("Error","No data found");
+
+                            return;
+                        }
+
+                        StringBuffer buffer = new StringBuffer();
+                        while(res.moveToNext()){
+                            buffer.append("Height : "+ res.getString(2)+"\n") ;
+                            buffer.append("Weight : "+ res.getString(3)+"\n") ;
+                            //buffer.append("bmi : "+ res.getString(2)+"\n\n") ;
+
+                        }
+                        showMessage("Data",buffer.toString());
+                    }
+                }
+
+
+        );
+    }
+
+    public void showMessage(String title, String Message){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(true);
+        builder.setTitle(title);
+        builder.setMessage(Message);
+        builder.show();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+}
+////////////////////////////////////////////////////////////////////////////
+Activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="125dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        tools:layout_editor_absoluteX="205dp"
+        tools:layout_editor_absoluteY="49dp" />
+
+    <EditText
+        android:id="@+id/editText2"
+        android:layout_width="125dp"
+        android:layout_height="20dp"
+        android:layout_alignTop="@+id/textView2"
+        android:layout_toEndOf="@+id/button"
+        android:ems="10"
+        android:inputType="textPersonName"
+        tools:layout_editor_absoluteX="205dp"
+        tools:layout_editor_absoluteY="132dp"
+        android:layout_toRightOf="@+id/button" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="81dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/TextView"
+        android:layout_marginTop="99dp"
+        android:text="Height"
+        tools:layout_editor_absoluteX="50dp"
+        tools:layout_editor_absoluteY="49dp"
+        android:layout_alignLeft="@+id/TextView" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="83dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/textView"
+        android:layout_marginTop="146dp"
+        android:text="Weight"
+        tools:layout_editor_absoluteX="50dp"
+        tools:layout_editor_absoluteY="132dp"
+        android:layout_alignLeft="@+id/textView" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="117dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/textView"
+        android:layout_marginBottom="241dp"
+        android:text="Show BMI"
+        tools:layout_editor_absoluteX="50dp"
+        tools:layout_editor_absoluteY="292dp"
+        android:layout_alignLeft="@+id/textView" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="117dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/textView"
+        android:layout_marginBottom="178dp"
+        android:text="Add Data"
+        tools:layout_editor_absoluteX="50dp"
+        tools:layout_editor_absoluteY="372dp"
+        android:layout_alignLeft="@+id/textView" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/button4"
+        android:layout_marginEnd="15dp"
+        android:text="View Details"
+        tools:layout_editor_absoluteX="50dp"
+        tools:layout_editor_absoluteY="460dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="15dp" />
+
+    <EditText
+        android:id="@+id/editText4"
+        android:layout_width="124dp"
+        android:layout_height="22dp"
+        android:layout_alignStart="@+id/editText2"
+        android:layout_alignTop="@+id/textView"
+        android:ems="10"
+        android:inputType="textPersonName"
+        tools:layout_editor_absoluteX="205dp"
+        tools:layout_editor_absoluteY="292dp"
+        android:layout_alignLeft="@+id/editText2" />
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="104dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/button5"
+        android:layout_centerHorizontal="true"
+        android:text="Update"
+        tools:layout_editor_absoluteX="205dp"
+        tools:layout_editor_absoluteY="372dp" />
+
+    <TextView
+        android:id="@+id/TextView"
+        android:layout_width="95dp"
+        android:layout_height="34dp"
+        android:layout_alignEnd="@+id/editText"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="196dp"
+        android:text="ID"
+        tools:layout_editor_absoluteX="50dp"
+        tools:layout_editor_absoluteY="201dp"
+        android:layout_alignRight="@+id/editText" />
+
+    <EditText
+        android:id="@+id/editID"
+        android:layout_width="122dp"
+        android:layout_height="29dp"
+        android:layout_alignTop="@+id/TextView"
+        android:layout_toEndOf="@+id/button"
+        android:ems="10"
+        android:inputType="textPersonName"
+        tools:layout_editor_absoluteX="204dp"
+        tools:layout_editor_absoluteY="201dp"
+        android:layout_toRightOf="@+id/button" />
+
+    <Button
+        android:id="@+id/button5"
+        android:layout_width="99dp"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/editText"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="22dp"
+        android:text="Delete"
+        tools:layout_editor_absoluteX="205dp"
+        tools:layout_editor_absoluteY="460dp"
+        android:layout_alignRight="@+id/editText" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="122dp"
+        android:layout_height="51dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/button"
+        android:layout_marginEnd="62dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="62dp" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="140dp"
+        android:layout_height="35dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/textView"
+        android:layout_marginTop="35dp"
+        android:text="BMI "
+        android:layout_alignLeft="@+id/textView" />
+
+</RelativeLayout>
+//////////////////////////////////////////////////////////////////////
+content_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".MainActivity"
+    tools:showIn="@layout/activity_main">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello World!"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</RelativeLayout>
+/////////////////////////////////////////////////////////////////////
+DatabaseHelper.java
+package com.example.hppc.healthcare;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+public class DatabaseHelper extends SQLiteOpenHelper{
+    public static final String DATABASE_NAME = "Health.db";
+    public static final String TABLE_NAME= "Bmi_table";
+    public static final String COL_1= "ID";
+    public static final String COL_2= "Height";
+    public static final String COL_3= "Weight";
+
+
+    public DatabaseHelper(Context context) {
+        super(context, DATABASE_NAME, null, 1);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        db.execSQL("create table " + TABLE_NAME + "(ID INTEGER PRIMARY KEY AUTOINCREMENT,Height double,Weight double)");
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS " +TABLE_NAME);
+        onCreate(db);
+    }
+
+    public boolean insertData(String Height, String Weight){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(COL_2, Height);
+        contentValues.put(COL_3, Weight);
+        //contentValues.put(COL_3, bmi);
+
+        long result = db.insert(TABLE_NAME,null,contentValues);
+        if(result == -1)
+            return false;
+        else
+            return true;
+    }
+    public Cursor getAllData(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_NAME,null);
+        return res;
+    }
+
+    public boolean updateData(String id, String Height, String Weight){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(COL_1, id);
+        contentValues.put(COL_2, Height);
+        contentValues.put(COL_3, Weight);
+
+
+        db.update(TABLE_NAME,contentValues,"ID = ?",new String[] { id });
+        return true;
+    }
+
+    public Integer deleteData (String id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete(TABLE_NAME,"ID = ?",new String[]{id});
+    }
+}
